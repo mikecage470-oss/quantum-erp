@@ -1,0 +1,80 @@
+[
+  {
+    "id": "C001",
+    "name": "Acme Corporation",
+    "contact": "Robert Anderson",
+    "email": "robert@acmecorp.com",
+    "phone": "+1-555-0200",
+    "address": "100 Business Pkwy, Los Angeles, CA 90001",
+    "paymentTerms": "Net 30",
+    "status": "Active",
+    "accountBalance": 15000,
+    "totalOrders": 24,
+    "lifetimeValue": 85000
+  },
+  {
+    "id": "C002",
+    "name": "Innovative Designs LLC",
+    "contact": "Jennifer Lee",
+    "email": "jennifer@innovativedesigns.com",
+    "phone": "+1-555-0201",
+    "address": "200 Creative Ave, Miami, FL 33101",
+    "paymentTerms": "Net 60",
+    "status": "Active",
+    "accountBalance": 8500,
+    "totalOrders": 31,
+    "lifetimeValue": 124000
+  },
+  {
+    "id": "C003",
+    "name": "Metro Enterprises",
+    "contact": "Michael Chen",
+    "email": "michael@metroenterprises.com",
+    "phone": "+1-555-0202",
+    "address": "300 Metro Plaza, Seattle, WA 98101",
+    "paymentTerms": "Net 30",
+    "status": "Active",
+    "accountBalance": 22000,
+    "totalOrders": 42,
+    "lifetimeValue": 198000
+  },
+  {
+    "id": "C004",
+    "name": "Skyline Solutions",
+    "contact": "Amanda White",
+    "email": "amanda@skylinesolutions.com",
+    "phone": "+1-555-0203",
+    "address": "400 Skyline Dr, Denver, CO 80201",
+    "paymentTerms": "Net 30",
+    "status": "Active",
+    "accountBalance": 5000,
+    "totalOrders": 19,
+    "lifetimeValue": 67000
+  },
+  {
+    "id": "C005",
+    "name": "Coastal Trading Co",
+    "contact": "James Martinez",
+    "email": "james@coastaltrading.com",
+    "phone": "+1-555-0204",
+    "address": "500 Coastal Rd, Portland, OR 97201",
+    "paymentTerms": "Net 60",
+    "status": "Active",
+    "accountBalance": 12000,
+    "totalOrders": 28,
+    "lifetimeValue": 102000
+  },
+  {
+    "id": "C006",
+    "name": "Urban Tech Group",
+    "contact": "Lisa Thompson",
+    "email": "lisa@urbantech.com",
+    "phone": "+1-555-0205",
+    "address": "600 Urban Center, Phoenix, AZ 85001",
+    "paymentTerms": "Net 30",
+    "status": "Inactive",
+    "accountBalance": 0,
+    "totalOrders": 12,
+    "lifetimeValue": 34000
+  }
+]
