@@ -28,12 +28,12 @@ export default function OrderTrackingDetailView({ order, isOpen, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="order-detail-title">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Order Details</h2>
+            <h2 id="order-detail-title" className="text-2xl font-bold text-gray-900">Order Details</h2>
             <p className="text-sm text-gray-500 mt-1">{order.orderId} - {order.customer}</p>
           </div>
           <Button 
@@ -41,6 +41,7 @@ export default function OrderTrackingDetailView({ order, isOpen, onClose }) {
             size="icon"
             onClick={onClose}
             className="rounded-full"
+            aria-label="Close dialog"
           >
             <X className="h-5 w-5" />
           </Button>

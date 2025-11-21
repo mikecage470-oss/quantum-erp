@@ -332,7 +332,7 @@ export default function OrderTrackingTable() {
                 </tbody>
                 <tfoot>
                   <tr className="border-t bg-gray-100 font-semibold">
-                    <td colSpan={9} className="px-4 py-3 text-right text-sm">
+                    <td colSpan={columns.length - 2} className="px-4 py-3 text-right text-sm">
                       Total Actual Profit:
                     </td>
                     <td className="px-4 py-3 text-sm">
@@ -353,9 +353,9 @@ export default function OrderTrackingTable() {
               Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{' '}
               {Math.min(
                 (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-                orders.length
+                table.getFilteredRowModel().rows.length
               )}{' '}
-              of {orders.length} orders
+              of {table.getFilteredRowModel().rows.length} orders
             </div>
             <div className="flex items-center gap-2">
               <Button
