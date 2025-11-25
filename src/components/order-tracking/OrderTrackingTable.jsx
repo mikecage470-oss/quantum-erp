@@ -25,12 +25,6 @@ import {
   CC_CHARGE_RATE
 } from '@/config/constants'
 
-// Helper function to get color for an option
-const getOptionColor = (options, value) => {
-  const option = options.find(opt => opt.value === value)
-  return option?.color || ''
-}
-
 export default function OrderTrackingTable() {
   const { orders, updateOrder } = useOrderTrackingStore()
   const [globalFilter, setGlobalFilter] = useState('')

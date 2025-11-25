@@ -308,7 +308,11 @@ export default function OrderTrackingEditModal({ order, isOpen, onClose }) {
                     min="0"
                     max="1"
                     value={formData.ccChargeRate ?? 0.01}
-                    onChange={(e) => handleChange('ccChargeRate', parseFloat(e.target.value) || 0)}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value)
+                      const validValue = isNaN(value) ? 0.01 : Math.max(0, Math.min(1, value))
+                      handleChange('ccChargeRate', validValue)
+                    }}
                   />
                 </div>
 
