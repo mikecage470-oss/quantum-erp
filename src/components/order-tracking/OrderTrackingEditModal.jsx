@@ -300,6 +300,23 @@ export default function OrderTrackingEditModal({ order, isOpen, onClose }) {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="ccChargeRate">CC Charge Rate (e.g., 0.01 for 1%)</Label>
+                  <Input
+                    id="ccChargeRate"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="1"
+                    value={formData.ccChargeRate ?? 0.01}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value)
+                      const validValue = isNaN(value) ? 0.01 : Math.max(0, Math.min(1, value))
+                      handleChange('ccChargeRate', validValue)
+                    }}
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="ccUsed">CC Used</Label>
                   <Select 
                     value={formData.ccUsed || ''} 

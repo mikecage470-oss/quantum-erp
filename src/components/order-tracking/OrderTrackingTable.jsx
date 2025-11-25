@@ -85,7 +85,12 @@ export default function OrderTrackingTable() {
               </SelectTrigger>
               <SelectContent>
                 {ATTENTION_CATEGORIES.map(cat => (
-                  <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                  <SelectItem key={cat.value} value={cat.value}>
+                    <span className="flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full ${cat.color}`}></span>
+                      {cat.label}
+                    </span>
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -107,7 +112,12 @@ export default function OrderTrackingTable() {
               </SelectTrigger>
               <SelectContent>
                 {STATUS_OPTIONS.map(stat => (
-                  <SelectItem key={stat.value} value={stat.value}>{stat.label}</SelectItem>
+                  <SelectItem key={stat.value} value={stat.value}>
+                    <span className="flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full ${stat.color}`}></span>
+                      {stat.label}
+                    </span>
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -129,7 +139,12 @@ export default function OrderTrackingTable() {
               </SelectTrigger>
               <SelectContent>
                 {PAYMENT_STATUS_OPTIONS.map(ps => (
-                  <SelectItem key={ps.value} value={ps.value}>{ps.label}</SelectItem>
+                  <SelectItem key={ps.value} value={ps.value}>
+                    <span className="flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full ${ps.color}`}></span>
+                      {ps.label}
+                    </span>
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -151,7 +166,12 @@ export default function OrderTrackingTable() {
               </SelectTrigger>
               <SelectContent>
                 {SUPPLY_CHAIN_STAGES.map(stage => (
-                  <SelectItem key={stage.value} value={stage.value}>{stage.label}</SelectItem>
+                  <SelectItem key={stage.value} value={stage.value}>
+                    <span className="flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full ${stage.color}`}></span>
+                      {stage.label}
+                    </span>
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -169,7 +189,8 @@ export default function OrderTrackingTable() {
         cell: (info) => {
           const order = info.row.original
           const grossProfit = (order.poAmount || 0) - (order.vendorAmount || 0) - (order.specialExpenses || 0)
-          const ccCharge = grossProfit * CC_CHARGE_RATE
+          const orderCcChargeRate = order.ccChargeRate ?? CC_CHARGE_RATE
+          const ccCharge = grossProfit * orderCcChargeRate
           const actualProfit = grossProfit - ccCharge
           return (
             <span className={actualProfit >= 0 ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
@@ -239,7 +260,8 @@ export default function OrderTrackingTable() {
   const totalActualProfit = useMemo(() => {
     return orders.reduce((sum, order) => {
       const grossProfit = (order.poAmount || 0) - (order.vendorAmount || 0) - (order.specialExpenses || 0)
-      const ccCharge = grossProfit * CC_CHARGE_RATE
+      const orderCcChargeRate = order.ccChargeRate ?? CC_CHARGE_RATE
+      const ccCharge = grossProfit * orderCcChargeRate
       const actualProfit = grossProfit - ccCharge
       return sum + actualProfit
     }, 0)

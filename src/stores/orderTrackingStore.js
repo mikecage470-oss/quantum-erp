@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { STORAGE_KEYS } from '../config/constants'
+import { STORAGE_KEYS, CC_CHARGE_RATE } from '../config/constants'
 import mockOrderTracking from '../data/mockOrderTracking.json'
 
 const useOrderTrackingStore = create(
@@ -12,7 +12,8 @@ const useOrderTrackingStore = create(
         const newOrder = {
           ...order,
           id: `ORD${String(get().orders.length + 1).padStart(3, '0')}`,
-          status: 'Pending'
+          status: 'Pending',
+          ccChargeRate: order.ccChargeRate ?? CC_CHARGE_RATE
         }
         set((state) => ({ orders: [...state.orders, newOrder] }))
       },

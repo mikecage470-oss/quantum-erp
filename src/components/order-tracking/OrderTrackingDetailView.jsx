@@ -17,9 +17,11 @@ export default function OrderTrackingDetailView({ order, isOpen, onClose }) {
   if (!order || !isOpen) return null
 
   // Calculate financial metrics
+  const orderCcChargeRate = order.ccChargeRate ?? CC_CHARGE_RATE
   const grossProfit = (order.poAmount || 0) - (order.vendorAmount || 0) - (order.specialExpenses || 0)
-  const ccCharge = grossProfit * CC_CHARGE_RATE
+  const ccCharge = grossProfit * orderCcChargeRate
   const actualProfit = grossProfit - ccCharge
+  const ccChargePercent = Math.round(orderCcChargeRate * 100)
 
   // Helper function to get label from value
   const getLabel = (options, value) => {
@@ -166,7 +168,7 @@ export default function OrderTrackingDetailView({ order, isOpen, onClose }) {
                       className="font-medium"
                     />
                     <InfoRow 
-                      label="CC Charge (1%)" 
+                      label={`CC Charge (${ccChargePercent}%)`}
                       value={formatCurrency(ccCharge)} 
                       className="text-sm text-gray-600"
                     />
