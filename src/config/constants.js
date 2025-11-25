@@ -9,52 +9,52 @@ export const DATETIME_FORMAT = 'yyyy-MM-dd HH:mm:ss';
 
 // Updated Attention Categories
 export const ATTENTION_CATEGORIES = [
-  { value: 'po-received', label: 'PO Received' },
-  { value: 'in-process', label: 'In Process' },
-  { value: 'follow-up', label: 'Follow Up' },
-  { value: 'cancelled', label: 'Cancelled' },
-  { value: 'cheque-awaited', label: 'Cheque Awaited' },
-  { value: 'cheque-received', label: 'Cheque Received' },
-  { value: 'completed', label: 'Completed (Items Delivered)' },
-  { value: 'closed-chq-rec', label: 'Closed (Chq Rec)' },
-  { value: 'closed-issue', label: 'Closed (Issue)' },
-  { value: 'adjustment-net30', label: 'Adjustment Net 30' },
+  { value: 'po-received', label: 'PO Received', color: 'bg-blue-500' },
+  { value: 'in-process', label: 'In Process', color: 'bg-amber-500' },
+  { value: 'follow-up', label: 'Follow Up', color: 'bg-orange-500' },
+  { value: 'cancelled', label: 'Cancelled', color: 'bg-red-500' },
+  { value: 'cheque-awaited', label: 'Cheque Awaited', color: 'bg-purple-500' },
+  { value: 'cheque-received', label: 'Cheque Received', color: 'bg-green-500' },
+  { value: 'completed', label: 'Completed (Items Delivered)', color: 'bg-green-700' },
+  { value: 'closed-chq-rec', label: 'Closed (Chq Rec)', color: 'bg-slate-500' },
+  { value: 'closed-issue', label: 'Closed (Issue)', color: 'bg-gray-600' },
+  { value: 'adjustment-net30', label: 'Adjustment Net 30', color: 'bg-indigo-500' },
 ];
 
 // Updated Status Options
 export const STATUS_OPTIONS = [
-  { value: 'in-process', label: 'In Process' },
-  { value: 'cancelled', label: 'Cancelled' },
-  { value: 'closed-check-received', label: 'Closed (Check Received)' },
-  { value: 'action-awaited', label: 'Action Awaited' },
-  { value: 'check-awaited', label: 'Check Awaited' },
+  { value: 'in-process', label: 'In Process', color: 'bg-amber-500' },
+  { value: 'cancelled', label: 'Cancelled', color: 'bg-red-500' },
+  { value: 'closed-check-received', label: 'Closed (Check Received)', color: 'bg-green-500' },
+  { value: 'action-awaited', label: 'Action Awaited', color: 'bg-orange-500' },
+  { value: 'check-awaited', label: 'Check Awaited', color: 'bg-purple-500' },
 ];
 
 // Updated Payment Status
 export const PAYMENT_STATUS_OPTIONS = [
-  { value: 'due', label: 'Due' },
-  { value: 'due-this-week', label: 'Due This Week' },
-  { value: 'due-today', label: 'Due Today' },
-  { value: 'paid', label: 'Paid' },
-  { value: 'net-30', label: 'Net 30' },
-  { value: 'cancelled', label: 'Cancelled' },
+  { value: 'due', label: 'Due', color: 'bg-red-500' },
+  { value: 'due-this-week', label: 'Due This Week', color: 'bg-orange-500' },
+  { value: 'due-today', label: 'Due Today', color: 'bg-red-700' },
+  { value: 'paid', label: 'Paid', color: 'bg-green-500' },
+  { value: 'net-30', label: 'Net 30', color: 'bg-blue-500' },
+  { value: 'cancelled', label: 'Cancelled', color: 'bg-gray-500' },
 ];
 
 // Updated Supply Chain Stages
 export const SUPPLY_CHAIN_STAGES = [
-  { value: 'vendor-assessment', label: 'Vendor Assessment' },
-  { value: 'initial-coord', label: 'Initial Coord Supplier' },
-  { value: 're-sourcing', label: 'Re-Sourcing' },
-  { value: 'qms-po-sent', label: 'QMS PO Sent' },
-  { value: 'payment-to-supplier', label: 'Payment to Supplier' },
-  { value: 'shipped', label: 'Shipped from Supplier' },
-  { value: 'in-transit', label: 'In Transit' },
-  { value: 'delivered', label: 'Delivered' },
-  { value: 'returned', label: 'Returned' },
-  { value: 'cancelled', label: 'Cancelled' },
-  { value: 'other', label: 'Other' },
-  { value: 'waiting-period', label: 'Waiting Period' },
-  { value: 'check-awaited', label: 'Check Awaited' },
+  { value: 'vendor-assessment', label: 'Vendor Assessment', color: 'bg-sky-500' },
+  { value: 'initial-coord', label: 'Initial Coord Supplier', color: 'bg-blue-400' },
+  { value: 're-sourcing', label: 'Re-Sourcing', color: 'bg-amber-500' },
+  { value: 'qms-po-sent', label: 'QMS PO Sent', color: 'bg-yellow-500' },
+  { value: 'payment-to-supplier', label: 'Payment to Supplier', color: 'bg-orange-500' },
+  { value: 'shipped', label: 'Shipped from Supplier', color: 'bg-indigo-500' },
+  { value: 'in-transit', label: 'In Transit', color: 'bg-purple-500' },
+  { value: 'delivered', label: 'Delivered', color: 'bg-green-500' },
+  { value: 'returned', label: 'Returned', color: 'bg-red-500' },
+  { value: 'cancelled', label: 'Cancelled', color: 'bg-gray-500' },
+  { value: 'other', label: 'Other', color: 'bg-slate-500' },
+  { value: 'waiting-period', label: 'Waiting Period', color: 'bg-cyan-500' },
+  { value: 'check-awaited', label: 'Check Awaited', color: 'bg-violet-500' },
 ];
 
 // CC Used Options
