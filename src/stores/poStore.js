@@ -35,7 +35,6 @@ const usePOStore = create(
           shippingMethod: po.shippingMethod || 'Ground'
         }
         set((state) => ({ purchaseOrders: [...state.purchaseOrders, newPO] }))
-        return newPO
       },
       
       updatePurchaseOrder: (id, updates) => {
