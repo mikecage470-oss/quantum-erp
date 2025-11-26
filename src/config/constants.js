@@ -81,5 +81,11 @@ export const STORAGE_KEYS = {
   CUSTOMERS: 'quantum_erp_customers',
   POS: 'quantum_erp_pos',
   INVOICES: 'quantum_erp_invoices',
-  ORDER_TRACKING: 'quantum_erp_order_tracking'
+  ORDER_TRACKING: 'quantum_erp_order_tracking',
+  DATA_ARCHIVE: 'quantum_erp_data_archive'
 }
+
+export const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+]

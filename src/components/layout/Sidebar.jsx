@@ -6,6 +6,7 @@ import {
   ShoppingCart, 
   FileText, 
   Package, 
+  Archive,
   Settings 
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -18,6 +19,7 @@ const navigation = [
   { name: 'Purchase Orders', href: '/purchase-orders', icon: ShoppingCart },
   { name: 'Invoices', href: '/invoices', icon: FileText },
   { name: 'Order Tracking', href: '/order-tracking', icon: Package },
+  { name: 'Data Archive', href: '/data-archive', icon: Archive },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 

@@ -6,7 +6,11 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Separator } from '@/components/ui/separator'
 import useOrderTrackingStore from '@/stores/orderTrackingStore'
+import useDataArchiveStore from '@/stores/dataArchiveStore'
+import { Archive } from 'lucide-react'
+import { MONTH_NAMES } from '@/config/constants'
 import { 
   ATTENTION_CATEGORIES, 
   STATUS_OPTIONS, 
@@ -17,11 +21,19 @@ import {
 
 export default function OrderTrackingEditModal({ order, isOpen, onClose }) {
   const updateOrder = useOrderTrackingStore((state) => state.updateOrder)
+  const deleteOrder = useOrderTrackingStore((state) => state.deleteOrder)
+  const archiveOrder = useDataArchiveStore((state) => state.archiveOrder)
   const [formData, setFormData] = useState({})
+  const [archiveDate, setArchiveDate] = useState('')
+  const [archiveSuccess, setArchiveSuccess] = useState(false)
+  const [archiveMessage, setArchiveMessage] = useState('')
 
   useEffect(() => {
     if (order) {
       setFormData({ ...order })
+      setArchiveDate('')
+      setArchiveSuccess(false)
+      setArchiveMessage('')
     }
   }, [order])
 
@@ -33,6 +45,27 @@ export default function OrderTrackingEditModal({ order, isOpen, onClose }) {
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleArchive = () => {
+    if (!archiveDate) {
+      setArchiveMessage('Please select an Archive Date before proceeding.')
+      return
+    }
+
+    const date = new Date(archiveDate)
+    const monthName = MONTH_NAMES[date.getMonth()]
+    const year = date.getFullYear()
+
+    archiveOrder(formData, archiveDate)
+    deleteOrder(order.id)
+    
+    setArchiveSuccess(true)
+    setArchiveMessage(`Order archived to ${monthName} ${year}`)
+    
+    setTimeout(() => {
+      onClose()
+    }, 1500)
   }
 
   if (!order) return null
@@ -435,6 +468,46 @@ export default function OrderTrackingEditModal({ order, isOpen, onClose }) {
               </div>
             </TabsContent>
           </Tabs>
+
+          {/* Archive Section */}
+          <Separator className="my-6" />
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <Archive className="h-5 w-5" />
+              Archive Order
+            </h3>
+            <p className="text-sm text-gray-600">
+              Set an archive date and move this order to the Data Archive for historical reporting.
+            </p>
+            
+            {archiveMessage && (
+              <div className={`p-3 rounded-md text-sm ${archiveSuccess ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-yellow-50 text-yellow-700 border border-yellow-200'}`}>
+                {archiveMessage}
+              </div>
+            )}
+            
+            <div className="flex items-end gap-4">
+              <div className="space-y-2 flex-1">
+                <Label htmlFor="archiveDate">Archive Date</Label>
+                <Input
+                  id="archiveDate"
+                  type="date"
+                  value={archiveDate}
+                  onChange={(e) => setArchiveDate(e.target.value)}
+                />
+              </div>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleArchive}
+                disabled={!archiveDate || archiveSuccess}
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                <Archive className="h-4 w-4 mr-2" />
+                Proceed to Data Archive
+              </Button>
+            </div>
+          </div>
 
           <DialogFooter className="mt-6">
             <Button type="button" variant="outline" onClick={onClose}>

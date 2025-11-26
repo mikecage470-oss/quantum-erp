@@ -6,6 +6,7 @@ import Customers from './pages/Customers'
 import PurchaseOrders from './pages/PurchaseOrders'
 import Invoices from './pages/Invoices'
 import OrderTracking from './pages/OrderTracking'
+import DataArchive from './pages/DataArchive'
 import Settings from './pages/Settings'
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="purchase-orders" element={<PurchaseOrders />} />
           <Route path="invoices" element={<Invoices />} />
           <Route path="order-tracking" element={<OrderTracking />} />
+          <Route path="data-archive" element={<DataArchive />} />
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
