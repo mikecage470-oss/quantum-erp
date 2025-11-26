@@ -217,10 +217,10 @@ export default function CreatePO({ isOpen, onClose, po }) {
       let yPos = 20
 
       // Header Section
-      // Company logo (if uploaded)
+      // Company logo (if uploaded) - scaled down to appropriate size
       if (formData.companyLogo) {
         try {
-          doc.addImage(formData.companyLogo, 'PNG', 15, yPos, 40, 20)
+          doc.addImage(formData.companyLogo, 'PNG', 15, yPos, 25, 25)
         } catch {
           // If logo fails to load, continue without it
         }
@@ -305,22 +305,25 @@ export default function CreatePO({ isOpen, onClose, po }) {
         `$${item.total.toFixed(2)}`
       ])
 
+      const tableWidth = pageWidth - 30 // Full width minus margins (15 on each side)
       doc.autoTable({
         startY: yPos,
         head: [['Item #', 'Description', 'QTY', 'Unit Price', 'Total']],
         body: tableData,
         theme: 'striped',
+        margin: { left: 15, right: 15 },
+        tableWidth: tableWidth,
         headStyles: {
           fillColor: [51, 51, 51],
           textColor: 255,
           fontStyle: 'bold'
         },
         columnStyles: {
-          0: { cellWidth: 15, halign: 'center' },
-          1: { cellWidth: 80 },
-          2: { cellWidth: 20, halign: 'center' },
-          3: { cellWidth: 30, halign: 'right' },
-          4: { cellWidth: 30, halign: 'right' }
+          0: { cellWidth: tableWidth * 0.08, halign: 'center' },
+          1: { cellWidth: tableWidth * 0.52 },
+          2: { cellWidth: tableWidth * 0.10, halign: 'center' },
+          3: { cellWidth: tableWidth * 0.15, halign: 'right' },
+          4: { cellWidth: tableWidth * 0.15, halign: 'right' }
         },
         styles: {
           fontSize: 9,
@@ -360,21 +363,21 @@ export default function CreatePO({ isOpen, onClose, po }) {
       doc.text('Total:', summaryX, yPos)
       doc.text(`$${formData.total.toFixed(2)}`, pageWidth - 15, yPos, { align: 'right' })
 
-      // Terms and Conditions
+      // Terms and Conditions (centered, smaller font)
       yPos += 20
       if (yPos > 250) {
         doc.addPage()
         yPos = 20
       }
 
-      doc.setFontSize(10)
-      doc.setFont(undefined, 'bold')
-      doc.text('Terms and Conditions:', 15, yPos)
-      doc.setFont(undefined, 'normal')
       doc.setFontSize(8)
+      doc.setFont(undefined, 'bold')
+      doc.text('Terms and Conditions:', pageWidth / 2, yPos, { align: 'center' })
+      doc.setFont(undefined, 'normal')
+      doc.setFontSize(7)
       yPos += 6
       const termsLines = doc.splitTextToSize(formData.termsAndConditions, pageWidth - 30)
-      doc.text(termsLines, 15, yPos)
+      doc.text(termsLines, pageWidth / 2, yPos, { align: 'center' })
 
       // Generate filename and save
       const filename = `PO-${po?.id || 'NEW'}-${formData.orderDate}.pdf`
