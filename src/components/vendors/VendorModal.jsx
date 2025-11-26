@@ -10,50 +10,85 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
 import useVendorStore from '@/stores/vendorStore'
-import { PAYMENT_TERMS } from '@/config/constants'
+import { PAYMENT_STATUS_OPTIONS } from '@/config/constants'
 
 export default function VendorModal({ isOpen, onClose, vendor }) {
   const addVendor = useVendorStore((state) => state.addVendor)
   const updateVendor = useVendorStore((state) => state.updateVendor)
+  const findOrderByQmsId = useVendorStore((state) => state.findOrderByQmsId)
 
   const [formData, setFormData] = useState({
     name: '',
-    contact: '',
-    email: '',
-    phone: '',
-    address: '',
-    paymentTerms: 'Net 30',
-    status: 'Active',
-    rating: 0
+    vendorProductLink: '',
+    vendorAmount: '',
+    specialExpense: '',
+    qmsId: '',
+    paymentStatus: 'due'
   })
+  const [message, setMessage] = useState({ type: '', text: '' })
 
   useEffect(() => {
     if (vendor) {
-      setFormData(vendor)
+      setFormData({
+        name: vendor.name || '',
+        vendorProductLink: vendor.vendorProductLink || '',
+        vendorAmount: vendor.vendorAmount || '',
+        specialExpense: vendor.specialExpense || '',
+        qmsId: vendor.qmsId || '',
+        paymentStatus: vendor.paymentStatus || 'due'
+      })
     } else {
       setFormData({
         name: '',
-        contact: '',
-        email: '',
-        phone: '',
-        address: '',
-        paymentTerms: 'Net 30',
-        status: 'Active',
-        rating: 0
+        vendorProductLink: '',
+        vendorAmount: '',
+        specialExpense: '',
+        qmsId: '',
+        paymentStatus: 'due'
       })
     }
+    setMessage({ type: '', text: '' })
   }, [vendor, isOpen])
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (vendor) {
-      updateVendor(vendor.id, formData)
-    } else {
-      addVendor(formData)
+    
+    const vendorData = {
+      ...formData,
+      vendorAmount: parseFloat(formData.vendorAmount) || 0,
+      specialExpense: parseFloat(formData.specialExpense) || 0
     }
-    onClose()
+
+    if (vendor) {
+      // Editing existing vendor - just update, don't auto-update order
+      updateVendor(vendor.id, vendorData)
+      onClose()
+    } else {
+      // Adding new vendor - check for matching order and auto-update
+      const matchingOrder = findOrderByQmsId(formData.qmsId)
+      
+      if (!matchingOrder) {
+        setMessage({
+          type: 'warning',
+          text: `No matching order found for QMS ID "${formData.qmsId}". Vendor created but no order was updated.`
+        })
+      }
+      
+      const result = addVendor(vendorData)
+      
+      if (result.orderUpdated) {
+        setMessage({
+          type: 'success',
+          text: `Vendor created and order ${result.orderId} updated successfully!`
+        })
+      }
+      
+      // Close after a short delay so user can see the message
+      setTimeout(() => {
+        onClose()
+      }, matchingOrder ? 1500 : 2000)
+    }
   }
 
   const handleChange = (field, value) => {
@@ -67,6 +102,15 @@ export default function VendorModal({ isOpen, onClose, vendor }) {
           <DialogTitle>{vendor ? 'Edit Vendor' : 'Add New Vendor'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
+          {message.text && (
+            <div className={`mb-4 p-3 rounded ${
+              message.type === 'success' ? 'bg-green-100 text-green-800' :
+              message.type === 'warning' ? 'bg-yellow-100 text-yellow-800' :
+              'bg-red-100 text-red-800'
+            }`}>
+              {message.text}
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Vendor Name *</Label>
@@ -78,85 +122,66 @@ export default function VendorModal({ isOpen, onClose, vendor }) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="contact">Contact Person *</Label>
+              <Label htmlFor="vendorProductLink">Vendor Product Link</Label>
               <Input
-                id="contact"
-                value={formData.contact}
-                onChange={(e) => handleChange('contact', e.target.value)}
+                id="vendorProductLink"
+                type="url"
+                value={formData.vendorProductLink}
+                onChange={(e) => handleChange('vendorProductLink', e.target.value)}
+                placeholder="https://..."
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="vendorAmount">Vendor Amount ($) *</Label>
+              <Input
+                id="vendorAmount"
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.vendorAmount}
+                onChange={(e) => handleChange('vendorAmount', e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="specialExpense">Special Expense ($)</Label>
               <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleChange('email', e.target.value)}
+                id="specialExpense"
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.specialExpense}
+                onChange={(e) => handleChange('specialExpense', e.target.value)}
+                placeholder="0.00"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="qmsId">QMS ID *</Label>
+              <Input
+                id="qmsId"
+                value={formData.qmsId}
+                onChange={(e) => handleChange('qmsId', e.target.value)}
+                placeholder="QMS-XXXX"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => handleChange('phone', e.target.value)}
-              />
-            </div>
-            <div className="space-y-2 col-span-2">
-              <Label htmlFor="address">Address</Label>
-              <Textarea
-                id="address"
-                value={formData.address}
-                onChange={(e) => handleChange('address', e.target.value)}
-                rows={2}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="paymentTerms">Payment Terms</Label>
+              <Label htmlFor="paymentStatus">Payment Status *</Label>
               <Select
-                value={formData.paymentTerms}
-                onValueChange={(value) => handleChange('paymentTerms', value)}
+                value={formData.paymentStatus}
+                onValueChange={(value) => handleChange('paymentStatus', value)}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {PAYMENT_TERMS.map((term) => (
-                    <SelectItem key={term} value={term}>
-                      {term}
+                  {PAYMENT_STATUS_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => handleChange('status', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Active">Active</SelectItem>
-                  <SelectItem value="Inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="rating">Rating (0-5)</Label>
-              <Input
-                id="rating"
-                type="number"
-                min="0"
-                max="5"
-                step="0.1"
-                value={formData.rating}
-                onChange={(e) => handleChange('rating', parseFloat(e.target.value) || 0)}
-              />
             </div>
           </div>
           <DialogFooter className="mt-6">

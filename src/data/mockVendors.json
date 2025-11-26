@@ -1,67 +1,47 @@
 [
   {
     "id": "V001",
-    "name": "Tech Solutions Inc",
-    "contact": "John Smith",
-    "email": "john@techsolutions.com",
-    "phone": "+1-555-0100",
-    "address": "123 Tech Street, Silicon Valley, CA 94025",
-    "paymentTerms": "Net 30",
-    "status": "Active",
-    "rating": 4.5,
-    "totalOrders": 45,
-    "totalSpent": 125000
+    "name": "TechSupply Inc.",
+    "vendorProductLink": "https://techsupply.com/sensors-a",
+    "vendorAmount": 4500.00,
+    "specialExpense": 150.00,
+    "qmsId": "QMS-0001",
+    "paymentStatus": "due"
   },
   {
     "id": "V002",
-    "name": "Global Supplies Co",
-    "contact": "Sarah Johnson",
-    "email": "sarah@globalsupplies.com",
-    "phone": "+1-555-0101",
-    "address": "456 Supply Ave, New York, NY 10001",
-    "paymentTerms": "Net 60",
-    "status": "Active",
-    "rating": 4.8,
-    "totalOrders": 78,
-    "totalSpent": 289000
+    "name": "Global Parts Ltd",
+    "vendorProductLink": "https://globalparts.com/hp500",
+    "vendorAmount": 8750.00,
+    "specialExpense": 0,
+    "qmsId": "QMS-0002",
+    "paymentStatus": "paid"
   },
   {
     "id": "V003",
-    "name": "Premium Parts Ltd",
-    "contact": "Mike Davis",
-    "email": "mike@premiumparts.com",
-    "phone": "+1-555-0102",
-    "address": "789 Parts Blvd, Chicago, IL 60601",
-    "paymentTerms": "Net 30",
-    "status": "Active",
-    "rating": 4.2,
-    "totalOrders": 32,
-    "totalSpent": 95000
+    "name": "Industrial Solutions",
+    "vendorProductLink": "https://industrial.com/safety-bundle",
+    "vendorAmount": 5000.00,
+    "specialExpense": 250.00,
+    "qmsId": "QMS-0003",
+    "paymentStatus": "due-this-week"
   },
   {
     "id": "V004",
-    "name": "Digital Systems Corp",
-    "contact": "Emily Brown",
-    "email": "emily@digitalsystems.com",
-    "phone": "+1-555-0103",
-    "address": "321 Digital Way, Austin, TX 78701",
-    "paymentTerms": "Net 90",
-    "status": "Active",
-    "rating": 4.6,
-    "totalOrders": 56,
-    "totalSpent": 178000
+    "name": "Quality Components Co",
+    "vendorProductLink": "https://qualitycomp.com/cv300",
+    "vendorAmount": 3200.00,
+    "specialExpense": 0,
+    "qmsId": "QMS-0004",
+    "paymentStatus": "paid"
   },
   {
     "id": "V005",
-    "name": "Reliable Materials Inc",
-    "contact": "David Wilson",
-    "email": "david@reliablematerials.com",
-    "phone": "+1-555-0104",
-    "address": "654 Material St, Boston, MA 02101",
-    "paymentTerms": "Net 30",
-    "status": "Inactive",
-    "rating": 3.9,
-    "totalOrders": 18,
-    "totalSpent": 42000
+    "name": "TechSupply Inc.",
+    "vendorProductLink": "https://techsupply.com/ec750",
+    "vendorAmount": 7800.00,
+    "specialExpense": 0,
+    "qmsId": "QMS-0005",
+    "paymentStatus": "due"
   }
 ]
