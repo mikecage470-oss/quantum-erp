@@ -363,21 +363,49 @@ export default function CreatePO({ isOpen, onClose, po }) {
       doc.text('Total:', summaryX, yPos)
       doc.text(`$${formData.total.toFixed(2)}`, pageWidth - 15, yPos, { align: 'right' })
 
-      // Terms and Conditions (centered, smaller font)
-      yPos += 20
-      if (yPos > 250) {
-        doc.addPage()
-        yPos = 20
-      }
-
-      doc.setFontSize(8)
-      doc.setFont(undefined, 'bold')
-      doc.text('Terms and Conditions:', pageWidth / 2, yPos, { align: 'center' })
-      doc.setFont(undefined, 'normal')
+      // Terms and Conditions (full width, smaller font, positioned at bottom of last page)
+      const pageHeight = doc.internal.pageSize.getHeight()
+      const margin = 15
+      const termsWidth = pageWidth - (margin * 2)
+      
+      // Terms section layout constants
+      const TERMS_TITLE_HEIGHT = 6
+      const TERMS_LINE_HEIGHT = 3
+      const TERMS_SECTION_PADDING = 10
+      const CONTENT_TO_TERMS_BUFFER = 20
+      const BOTTOM_MARGIN = 10
+      
+      // Calculate terms height first
       doc.setFontSize(7)
-      yPos += 6
-      const termsLines = doc.splitTextToSize(formData.termsAndConditions, pageWidth - 30)
-      doc.text(termsLines, pageWidth / 2, yPos, { align: 'center' })
+      doc.setFont(undefined, 'bold')
+      doc.setFont(undefined, 'normal')
+      doc.setFontSize(6)
+      const termsLines = doc.splitTextToSize(formData.termsAndConditions, termsWidth)
+      const termsTextHeight = termsLines.length * TERMS_LINE_HEIGHT
+      const totalTermsHeight = TERMS_TITLE_HEIGHT + termsTextHeight + TERMS_SECTION_PADDING
+      
+      // Calculate where to position terms (at bottom of page)
+      const termsStartY = pageHeight - BOTTOM_MARGIN - totalTermsHeight
+      
+      // Check if we need to add a new page or if terms fit on current page
+      const contentEndY = yPos + CONTENT_TO_TERMS_BUFFER
+      if (contentEndY > termsStartY) {
+        // Content overlaps with where terms should be, add a new page
+        doc.addPage()
+        yPos = pageHeight - BOTTOM_MARGIN - totalTermsHeight
+      } else {
+        // Position terms at bottom of current page
+        yPos = termsStartY
+      }
+      
+      // Render Terms and Conditions
+      doc.setFontSize(7)
+      doc.setFont(undefined, 'bold')
+      doc.text('Terms and Conditions:', margin, yPos)
+      doc.setFont(undefined, 'normal')
+      doc.setFontSize(6)
+      yPos += TERMS_TITLE_HEIGHT
+      doc.text(termsLines, margin, yPos)
 
       // Generate filename and save
       const filename = `PO-${po?.id || 'NEW'}-${formData.orderDate}.pdf`
