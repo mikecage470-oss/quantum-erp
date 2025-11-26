@@ -16,6 +16,8 @@ import useDataArchiveStore from '@/stores/dataArchiveStore'
 import { ArrowLeft, Calendar, ChevronUp, ChevronDown, DollarSign, TrendingUp, Eye } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
+const calculateProfit = (order) => (order.poAmount || 0) - (order.vendorAmount || 0)
+
 export default function MonthView({ year, month, onBack }) {
   const { getOrdersByMonth, getMonthSummary } = useDataArchiveStore()
   const orders = useMemo(() => getOrdersByMonth(year, month), [year, month])
@@ -56,7 +58,7 @@ export default function MonthView({ year, month, onBack }) {
         header: 'Profit',
         cell: (info) => {
           const order = info.row.original
-          const profit = (order.poAmount || 0) - (order.vendorAmount || 0)
+          const profit = calculateProfit(order)
           return (
             <span className={profit >= 0 ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
               {formatCurrency(profit)}
@@ -340,8 +342,8 @@ export default function MonthView({ year, month, onBack }) {
               </div>
               <div>
                 <p className="font-medium text-gray-500">Profit</p>
-                <p className={(selectedOrder.poAmount - selectedOrder.vendorAmount) >= 0 ? 'text-green-600' : 'text-red-600'}>
-                  {formatCurrency((selectedOrder.poAmount || 0) - (selectedOrder.vendorAmount || 0))}
+                <p className={calculateProfit(selectedOrder) >= 0 ? 'text-green-600' : 'text-red-600'}>
+                  {formatCurrency(calculateProfit(selectedOrder))}
                 </p>
               </div>
               <div>
