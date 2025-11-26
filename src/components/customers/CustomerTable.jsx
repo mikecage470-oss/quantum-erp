@@ -1,6 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import useCustomerStore from '@/stores/customerStore'
 import { Edit, Trash2 } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
@@ -26,19 +25,19 @@ export default function CustomerTable({ onEdit }) {
                   Customer
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Contact
+                  Customer Name
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Payment Terms
+                  Customer Email
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Account Balance
+                  Customer PO
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Lifetime Value
+                  PO Amount
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
+                  QMS ID
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
@@ -50,29 +49,24 @@ export default function CustomerTable({ onEdit }) {
                 <tr key={customer.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{customer.name}</div>
+                      <div className="text-sm font-medium text-gray-900">{customer.customer}</div>
                       <div className="text-sm text-gray-500">{customer.id}</div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm text-gray-900">{customer.contact}</div>
-                      <div className="text-sm text-gray-500">{customer.email}</div>
-                    </div>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {customer.customerName}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {customer.paymentTerms}
+                    {customer.customerEmail}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {formatCurrency(customer.accountBalance)}
+                    {customer.customerPO}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {formatCurrency(customer.lifetimeValue)}
+                    {formatCurrency(customer.poAmount)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Badge variant={customer.status === 'Active' ? 'default' : 'secondary'}>
-                      {customer.status}
-                    </Badge>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {customer.qmsId}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Button

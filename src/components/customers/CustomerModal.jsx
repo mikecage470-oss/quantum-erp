@@ -9,47 +9,53 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
 import useCustomerStore from '@/stores/customerStore'
-import { PAYMENT_TERMS } from '@/config/constants'
 
 export default function CustomerModal({ isOpen, onClose, customer }) {
   const addCustomer = useCustomerStore((state) => state.addCustomer)
   const updateCustomer = useCustomerStore((state) => state.updateCustomer)
 
   const [formData, setFormData] = useState({
-    name: '',
-    contact: '',
-    email: '',
-    phone: '',
-    address: '',
-    paymentTerms: 'Net 30',
-    status: 'Active'
+    customer: '',
+    customerName: '',
+    customerEmail: '',
+    customerPO: '',
+    poAmount: '',
+    qmsId: ''
   })
 
   useEffect(() => {
     if (customer) {
-      setFormData(customer)
+      setFormData({
+        customer: customer.customer || '',
+        customerName: customer.customerName || '',
+        customerEmail: customer.customerEmail || '',
+        customerPO: customer.customerPO || '',
+        poAmount: customer.poAmount || '',
+        qmsId: customer.qmsId || ''
+      })
     } else {
       setFormData({
-        name: '',
-        contact: '',
-        email: '',
-        phone: '',
-        address: '',
-        paymentTerms: 'Net 30',
-        status: 'Active'
+        customer: '',
+        customerName: '',
+        customerEmail: '',
+        customerPO: '',
+        poAmount: '',
+        qmsId: ''
       })
     }
   }, [customer, isOpen])
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    const dataToSubmit = {
+      ...formData,
+      poAmount: parseFloat(formData.poAmount) || 0
+    }
     if (customer) {
-      updateCustomer(customer.id, formData)
+      updateCustomer(customer.id, dataToSubmit)
     } else {
-      addCustomer(formData)
+      addCustomer(dataToSubmit)
     }
     onClose()
   }
@@ -67,82 +73,68 @@ export default function CustomerModal({ isOpen, onClose, customer }) {
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Customer Name *</Label>
+              <Label htmlFor="customer">Customer *</Label>
               <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => handleChange('name', e.target.value)}
+                id="customer"
+                value={formData.customer}
+                onChange={(e) => handleChange('customer', e.target.value)}
+                placeholder="Company/Organization name"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="contact">Contact Person *</Label>
+              <Label htmlFor="customerName">Customer Name *</Label>
               <Input
-                id="contact"
-                value={formData.contact}
-                onChange={(e) => handleChange('contact', e.target.value)}
+                id="customerName"
+                value={formData.customerName}
+                onChange={(e) => handleChange('customerName', e.target.value)}
+                placeholder="Contact person name"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="customerEmail">Customer Email *</Label>
               <Input
-                id="email"
+                id="customerEmail"
                 type="email"
-                value={formData.email}
-                onChange={(e) => handleChange('email', e.target.value)}
+                value={formData.customerEmail}
+                onChange={(e) => handleChange('customerEmail', e.target.value)}
+                placeholder="email@example.com"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="customerPO">Customer PO *</Label>
               <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => handleChange('phone', e.target.value)}
-              />
-            </div>
-            <div className="space-y-2 col-span-2">
-              <Label htmlFor="address">Address</Label>
-              <Textarea
-                id="address"
-                value={formData.address}
-                onChange={(e) => handleChange('address', e.target.value)}
-                rows={2}
+                id="customerPO"
+                value={formData.customerPO}
+                onChange={(e) => handleChange('customerPO', e.target.value)}
+                placeholder="Purchase Order number"
+                required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="paymentTerms">Payment Terms</Label>
-              <Select
-                value={formData.paymentTerms}
-                onValueChange={(value) => handleChange('paymentTerms', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PAYMENT_TERMS.map((term) => (
-                    <SelectItem key={term} value={term}>
-                      {term}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label htmlFor="poAmount">PO Amount *</Label>
+              <Input
+                id="poAmount"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.poAmount}
+                onChange={(e) => handleChange('poAmount', e.target.value)}
+                placeholder="0.00"
+                required
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => handleChange('status', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Active">Active</SelectItem>
-                  <SelectItem value="Inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="qmsId">QMS ID *</Label>
+              <Input
+                id="qmsId"
+                value={formData.qmsId}
+                onChange={(e) => handleChange('qmsId', e.target.value)}
+                placeholder="QMS identification number"
+                required
+              />
             </div>
           </div>
           <DialogFooter className="mt-6">
