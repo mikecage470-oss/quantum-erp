@@ -1,39 +1,16 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import usePOStore from '@/stores/poStore'
-import { Edit, Trash2, CheckCircle } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
 import { formatCurrency, formatDate } from '@/lib/utils'
 
 export default function POTable({ onEdit }) {
   const purchaseOrders = usePOStore((state) => state.purchaseOrders)
   const deletePurchaseOrder = usePOStore((state) => state.deletePurchaseOrder)
-  const approvePO = usePOStore((state) => state.approvePO)
 
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this purchase order?')) {
       deletePurchaseOrder(id)
-    }
-  }
-
-  const handleApprove = (id) => {
-    if (window.confirm('Approve this purchase order?')) {
-      approvePO(id, 'Current User')
-    }
-  }
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Approved':
-        return 'bg-green-100 text-green-800'
-      case 'Pending':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'Rejected':
-        return 'bg-red-100 text-red-800'
-      case 'Completed':
-        return 'bg-blue-100 text-blue-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
     }
   }
 
@@ -48,19 +25,19 @@ export default function POTable({ onEdit }) {
                   PO Number
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Vendor
+                  QMS ID
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Order Date
+                  Vendor Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Delivery Date
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Total
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
@@ -74,6 +51,9 @@ export default function POTable({ onEdit }) {
                     <div className="text-sm font-medium text-gray-900">{po.id}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{po.qmsId || '-'}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">{po.vendorName}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -85,22 +65,7 @@ export default function POTable({ onEdit }) {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {formatCurrency(po.total)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(po.status)}`}>
-                      {po.status}
-                    </span>
-                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    {po.status === 'Pending' && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleApprove(po.id)}
-                        className="mr-2"
-                      >
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                      </Button>
-                    )}
                     <Button
                       variant="ghost"
                       size="sm"
