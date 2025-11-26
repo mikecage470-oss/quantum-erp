@@ -20,10 +20,10 @@ import DeleteConfirmationModal from './DeleteConfirmationModal'
 
 const calculateProfit = (order) => (order.poAmount || 0) - (order.vendorAmount || 0)
 
-export default function MonthView({ year, month, onBack }) {
-  const { getOrdersByMonth, getMonthSummary, deleteArchivedOrder, archivedOrders } = useDataArchiveStore()
-  const orders = useMemo(() => getOrdersByMonth(year, month), [year, month, archivedOrders])
-  const summary = useMemo(() => getMonthSummary(year, month), [year, month, archivedOrders])
+export default function AllYearOrders({ year, onBack }) {
+  const { getOrdersByYear, getYearSummary, deleteArchivedOrder, archivedOrders } = useDataArchiveStore()
+  const orders = useMemo(() => getOrdersByYear(year), [year, archivedOrders])
+  const summary = useMemo(() => getYearSummary(year), [year, archivedOrders])
   
   const [globalFilter, setGlobalFilter] = useState('')
   const [sorting, setSorting] = useState([])
@@ -95,8 +95,9 @@ export default function MonthView({ year, month, onBack }) {
         },
       },
       {
-        accessorKey: 'status',
-        header: 'Status',
+        accessorKey: 'archivedMonth',
+        header: 'Month',
+        cell: (info) => MONTH_NAMES[info.getValue() - 1],
       },
       {
         accessorKey: 'archiveDate',
@@ -176,7 +177,7 @@ export default function MonthView({ year, month, onBack }) {
           <span className="mx-2">/</span>
           <span>{year}</span>
           <span className="mx-2">/</span>
-          <span className="font-medium text-gray-900">{MONTH_NAMES[month - 1]}</span>
+          <span className="font-medium text-gray-900">All Orders</span>
         </nav>
       </div>
 
@@ -187,12 +188,12 @@ export default function MonthView({ year, month, onBack }) {
         </div>
       )}
 
-      {/* Month Summary Card */}
+      {/* Year Summary Card */}
       <Card>
         <CardHeader className="bg-blue-50 border-b">
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-blue-600" />
-            {MONTH_NAMES[month - 1]} {year}
+            {year} - All Orders
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
@@ -231,7 +232,7 @@ export default function MonthView({ year, month, onBack }) {
       {/* Orders Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Archived Orders ({summary.orderCount})</CardTitle>
+          <CardTitle>All Archived Orders ({summary.orderCount})</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Search */}
