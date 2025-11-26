@@ -363,21 +363,45 @@ export default function CreatePO({ isOpen, onClose, po }) {
       doc.text('Total:', summaryX, yPos)
       doc.text(`$${formData.total.toFixed(2)}`, pageWidth - 15, yPos, { align: 'right' })
 
-      // Terms and Conditions (centered, smaller font)
-      yPos += 20
-      if (yPos > 250) {
-        doc.addPage()
-        yPos = 20
-      }
-
-      doc.setFontSize(8)
-      doc.setFont(undefined, 'bold')
-      doc.text('Terms and Conditions:', pageWidth / 2, yPos, { align: 'center' })
-      doc.setFont(undefined, 'normal')
+      // Terms and Conditions (full width, smaller font, positioned at bottom of last page)
+      const pageHeight = doc.internal.pageSize.getHeight()
+      const margin = 15
+      const termsWidth = pageWidth - (margin * 2)
+      
+      // Calculate terms height first
       doc.setFontSize(7)
-      yPos += 6
-      const termsLines = doc.splitTextToSize(formData.termsAndConditions, pageWidth - 30)
-      doc.text(termsLines, pageWidth / 2, yPos, { align: 'center' })
+      doc.setFont(undefined, 'bold')
+      const titleHeight = 6
+      doc.setFont(undefined, 'normal')
+      doc.setFontSize(6)
+      const termsLines = doc.splitTextToSize(formData.termsAndConditions, termsWidth)
+      const lineHeight = 3
+      const termsTextHeight = termsLines.length * lineHeight
+      const totalTermsHeight = titleHeight + termsTextHeight + 10 // 10 for padding
+      
+      // Calculate where to position terms (at bottom of page)
+      const bottomMargin = 10
+      const termsStartY = pageHeight - bottomMargin - totalTermsHeight
+      
+      // Check if we need to add a new page or if terms fit on current page
+      const contentEndY = yPos + 20
+      if (contentEndY > termsStartY) {
+        // Content overlaps with where terms should be, add a new page
+        doc.addPage()
+        yPos = pageHeight - bottomMargin - totalTermsHeight
+      } else {
+        // Position terms at bottom of current page
+        yPos = termsStartY
+      }
+      
+      // Render Terms and Conditions
+      doc.setFontSize(7)
+      doc.setFont(undefined, 'bold')
+      doc.text('Terms and Conditions:', margin, yPos)
+      doc.setFont(undefined, 'normal')
+      doc.setFontSize(6)
+      yPos += titleHeight
+      doc.text(termsLines, margin, yPos)
 
       // Generate filename and save
       const filename = `PO-${po?.id || 'NEW'}-${formData.orderDate}.pdf`
