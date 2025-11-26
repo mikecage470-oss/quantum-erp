@@ -15,7 +15,6 @@ import useInvoiceStore from '@/stores/invoiceStore'
 import useCustomerStore from '@/stores/customerStore'
 import useOrderTrackingStore from '@/stores/orderTrackingStore'
 import { Plus, Trash2, Download, Upload, X } from 'lucide-react'
-import { PAYMENT_TERMS } from '@/config/constants'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 
@@ -31,8 +30,6 @@ Bank Address: 3090 Richmond Road, Lexington, KY 40509
 Account Number: 4004992295
 ABA/Routing Number: 042102694`
 const DEFAULT_TERMS_AND_CONDITIONS = `Any discrepancies must be reported within 7 days of invoice receipt. Payments made after 30 days will incur a 2% interest fee. Our bank account details remain unchanged; payments to any other account are at the payer's risk. No warranties are provided; all warranties are with the respective manufacturer. Once handed over to the freight forwarder, Quantum Concierge Services LLC is not liable for any loss or damage. Goods are non-returnable, and RMAs require prior approval. Order cancellations may incur charges.`
-
-const SHIPPING_METHODS = ['Ground', 'Express', 'Air Freight', 'Overnight', 'Freight', 'Pick Up']
 
 export default function CreateInvoice({ isOpen, onClose, invoice }) {
   const addInvoice = useInvoiceStore((state) => state.addInvoice)
@@ -53,8 +50,8 @@ export default function CreateInvoice({ isOpen, onClose, invoice }) {
     qmsId: '',
     qmsInvoice: '',
     shipToAddress: '',
-    paymentTerms: 'Net 30',
-    shippingMethod: 'Ground',
+    paymentTerms: '',
+    shippingMethod: '',
     deliveryDate: '',
     // Section C: Items
     items: [{ description: '', quantity: 1, unitPrice: 0, total: 0 }],
@@ -123,7 +120,7 @@ export default function CreateInvoice({ isOpen, onClose, invoice }) {
     setFormData((prev) => ({
       ...prev,
       customerId,
-      customerName: customer ? customer.name : ''
+      customerName: customer ? customer.customer : ''
     }))
   }
 
@@ -500,7 +497,7 @@ export default function CreateInvoice({ isOpen, onClose, invoice }) {
                     <SelectContent>
                       {customers.map((customer) => (
                         <SelectItem key={customer.id} value={customer.id}>
-                          {customer.name}
+                          {customer.customer}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -542,39 +539,19 @@ export default function CreateInvoice({ isOpen, onClose, invoice }) {
                 </div>
                 <div className="space-y-2">
                   <Label>Payment Terms</Label>
-                  <Select
+                  <Input
                     value={formData.paymentTerms}
-                    onValueChange={(value) => setFormData((prev) => ({ ...prev, paymentTerms: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select payment terms" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PAYMENT_TERMS.map((term) => (
-                        <SelectItem key={term} value={term}>
-                          {term}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    onChange={(e) => setFormData((prev) => ({ ...prev, paymentTerms: e.target.value }))}
+                    placeholder="Enter payment terms"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Shipping Method</Label>
-                  <Select
+                  <Input
                     value={formData.shippingMethod}
-                    onValueChange={(value) => setFormData((prev) => ({ ...prev, shippingMethod: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select shipping method" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SHIPPING_METHODS.map((method) => (
-                        <SelectItem key={method} value={method}>
-                          {method}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    onChange={(e) => setFormData((prev) => ({ ...prev, shippingMethod: e.target.value }))}
+                    placeholder="Enter shipping method"
+                  />
                 </div>
                 <div className="col-span-2 space-y-2">
                   <Label>Ship to Address</Label>

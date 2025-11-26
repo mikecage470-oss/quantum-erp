@@ -15,15 +15,12 @@ import usePOStore from '@/stores/poStore'
 import useVendorStore from '@/stores/vendorStore'
 import useOrderTrackingStore from '@/stores/orderTrackingStore'
 import { Plus, Trash2, Download, Upload, X } from 'lucide-react'
-import { PAYMENT_TERMS } from '@/config/constants'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 
 const DEFAULT_COMPANY_NAME = 'Quantum Concierge Services LLC'
 const DEFAULT_COMPANY_ADDRESS = '208 Somersly PL, Lexington KY, 40515'
 const DEFAULT_TERMS_AND_CONDITIONS = `This Purchase Order (PO) is valid for 15 days from the date of issuance. Seller must comply with all applicable federal, state, and local laws, including U.S. government procurement regulations. Goods/services must meet PO specifications and delivery schedules. Buyer reserves the right to inspect, reject, and return non-compliant items at the Seller's expense. The PO number must be referenced on all invoices, packing slips, and related documents. Payment will be processed upon verification of delivered goods/services or as agreed between Buyer and Seller. Discrepancies may delay payment. Seller is responsible for any restocking fees or return shipping costs due to errors on their part. All express and implied warranties shall apply in accordance with industry standards and the Seller's terms. Buyer reserves the right to request proof of origin, compliance certifications, or test reports before accepting goods. Seller must maintain confidentiality and comply with cybersecurity and export control laws where applicable. Seller shall indemnify and hold harmless the Buyer from any claims, damages, or liabilities related to the goods/services provided. Buyer reserves the right to modify or cancel this PO before shipment or service completion, with notice to the Seller. Neither party is liable for delays due to uncontrollable events (e.g., natural disasters, government actions).`
-
-const SHIPPING_METHODS = ['Ground', 'Express', 'Air Freight', 'Overnight', 'Freight', 'Pick Up']
 
 export default function CreatePO({ isOpen, onClose, po }) {
   const addPurchaseOrder = usePOStore((state) => state.addPurchaseOrder)
@@ -46,8 +43,8 @@ export default function CreatePO({ isOpen, onClose, po }) {
     qmsId: '',
     qmsPO: '',
     shipToAddress: '',
-    paymentTerms: 'Net 30',
-    shippingMethod: 'Ground',
+    paymentTerms: '',
+    shippingMethod: '',
     deliveryDate: '',
     // Section D: Items
     items: [{ description: '', quantity: 1, unitPrice: 0, total: 0 }],
@@ -523,39 +520,19 @@ export default function CreatePO({ isOpen, onClose, po }) {
                 </div>
                 <div className="space-y-2">
                   <Label>Payment Terms</Label>
-                  <Select
+                  <Input
                     value={formData.paymentTerms}
-                    onValueChange={(value) => setFormData((prev) => ({ ...prev, paymentTerms: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select payment terms" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PAYMENT_TERMS.map((term) => (
-                        <SelectItem key={term} value={term}>
-                          {term}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    onChange={(e) => setFormData((prev) => ({ ...prev, paymentTerms: e.target.value }))}
+                    placeholder="Enter payment terms"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Shipping Method</Label>
-                  <Select
+                  <Input
                     value={formData.shippingMethod}
-                    onValueChange={(value) => setFormData((prev) => ({ ...prev, shippingMethod: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select shipping method" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SHIPPING_METHODS.map((method) => (
-                        <SelectItem key={method} value={method}>
-                          {method}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    onChange={(e) => setFormData((prev) => ({ ...prev, shippingMethod: e.target.value }))}
+                    placeholder="Enter shipping method"
+                  />
                 </div>
                 <div className="col-span-3 space-y-2">
                   <Label>Ship to Address</Label>
