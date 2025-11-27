@@ -41,13 +41,21 @@ const useDataArchiveStore = create(
         const orders = get().getOrdersByYear(year)
         const totalCustomerPOAmount = orders.reduce((sum, order) => sum + (order.poAmount || 0), 0)
         const totalVendorAmount = orders.reduce((sum, order) => sum + (order.vendorAmount || 0), 0)
-        const grossProfit = totalCustomerPOAmount - totalVendorAmount
+        const totalAdditionalCharges = orders.reduce((sum, order) => sum + (order.specialExpenses || 0), 0)
+        const totalCCCharges = orders.reduce((sum, order) => {
+          const ccChargeRate = order.ccChargeRate ?? 0.01
+          const grossProfit = (order.poAmount || 0) - (order.vendorAmount || 0) - (order.specialExpenses || 0)
+          return sum + (grossProfit * ccChargeRate)
+        }, 0)
+        const actualProfit = totalCustomerPOAmount - totalVendorAmount - totalAdditionalCharges - totalCCCharges
         
         return {
           year,
           totalCustomerPOAmount,
           totalVendorAmount,
-          grossProfit,
+          totalAdditionalCharges,
+          totalCCCharges,
+          actualProfit,
           orderCount: orders.length
         }
       },
@@ -56,14 +64,22 @@ const useDataArchiveStore = create(
         const orders = get().getOrdersByMonth(year, month)
         const totalCustomerPOAmount = orders.reduce((sum, order) => sum + (order.poAmount || 0), 0)
         const totalVendorAmount = orders.reduce((sum, order) => sum + (order.vendorAmount || 0), 0)
-        const grossProfit = totalCustomerPOAmount - totalVendorAmount
+        const totalAdditionalCharges = orders.reduce((sum, order) => sum + (order.specialExpenses || 0), 0)
+        const totalCCCharges = orders.reduce((sum, order) => {
+          const ccChargeRate = order.ccChargeRate ?? 0.01
+          const grossProfit = (order.poAmount || 0) - (order.vendorAmount || 0) - (order.specialExpenses || 0)
+          return sum + (grossProfit * ccChargeRate)
+        }, 0)
+        const actualProfit = totalCustomerPOAmount - totalVendorAmount - totalAdditionalCharges - totalCCCharges
         
         return {
           year,
           month,
           totalCustomerPOAmount,
           totalVendorAmount,
-          grossProfit,
+          totalAdditionalCharges,
+          totalCCCharges,
+          actualProfit,
           orderCount: orders.length
         }
       },

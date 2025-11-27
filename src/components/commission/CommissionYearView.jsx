@@ -1,24 +1,24 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/utils'
 import { MONTH_NAMES } from '@/config/constants'
-import useDataArchiveStore from '@/stores/dataArchiveStore'
-import { Calendar, ChevronRight, DollarSign, TrendingUp, List } from 'lucide-react'
+import useCommissionStore from '@/stores/commissionStore'
+import { Calendar, ChevronRight, DollarSign, TrendingUp, List, Percent } from 'lucide-react'
 
-export default function YearView({ onSelectMonth, onViewAllOrders }) {
-  const { archivedOrders, getAllYears, getYearSummary, getMonthsForYear } = useDataArchiveStore()
-  const years = useMemo(() => getAllYears(), [archivedOrders])
+export default function CommissionYearView({ onSelectMonth, onViewAllCommissions }) {
+  const { commissions, getAllYears, getYearSummary, getMonthsForYear } = useCommissionStore()
+  const years = useMemo(() => getAllYears(), [commissions])
 
   if (years.length === 0) {
     return (
       <Card className="text-center py-12">
         <CardContent>
-          <Calendar className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Archived Data</h3>
+          <Percent className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Commission Records</h3>
           <p className="text-gray-600">
-            There are no archived orders yet. To archive orders, go to Order Tracking,
-            edit an order, set an Archive Date, and click &quot;Proceed to Data Archive&quot;.
+            There are no commission records yet. Commission records are automatically created 
+            when orders are added in Order Tracking.
           </p>
         </CardContent>
       </Card>
@@ -33,9 +33,9 @@ export default function YearView({ onSelectMonth, onViewAllOrders }) {
         
         return (
           <Card key={year} className="overflow-hidden">
-            <CardHeader className="bg-blue-50 border-b">
+            <CardHeader className="bg-purple-50 border-b">
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-blue-600" />
+                <Calendar className="h-5 w-5 text-purple-600" />
                 {year}
               </CardTitle>
             </CardHeader>
@@ -60,30 +60,30 @@ export default function YearView({ onSelectMonth, onViewAllOrders }) {
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                  <TrendingUp className={`h-8 w-8 ${summary.actualProfit >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+                  <TrendingUp className={`h-8 w-8 ${summary.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`} />
                   <div>
-                    <p className="text-sm text-gray-600">Actual Profit</p>
-                    <p className={`text-lg font-semibold ${summary.actualProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {formatCurrency(summary.actualProfit)}
+                    <p className="text-sm text-gray-600">Net Profit</p>
+                    <p className={`text-lg font-semibold ${summary.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {formatCurrency(summary.netProfit)}
                     </p>
                   </div>
                 </div>
               </div>
               
-              {/* View All Orders Button */}
+              {/* View All Commissions Button */}
               <div className="mb-6">
                 <Button
-                  onClick={() => onViewAllOrders(year)}
-                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+                  onClick={() => onViewAllCommissions(year)}
+                  className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700"
                 >
                   <List className="h-4 w-4 mr-2" />
-                  View All Orders
+                  View All Commissions
                 </Button>
               </div>
               
               <div>
                 <p className="text-sm font-medium text-gray-700 mb-3">
-                  Months with data ({summary.orderCount} orders total):
+                  Months with data ({summary.commissionCount} records total):
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {months.map(month => (

@@ -7,11 +7,14 @@ import PurchaseOrders from './pages/PurchaseOrders'
 import Invoices from './pages/Invoices'
 import OrderTracking from './pages/OrderTracking'
 import DataArchive from './pages/DataArchive'
+import Commission from './pages/Commission'
 import Settings from './pages/Settings'
+import CommissionInitializer from './components/commission/CommissionInitializer'
 
 function App() {
   return (
     <Router>
+      <CommissionInitializer />
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
@@ -22,6 +25,7 @@ function App() {
           <Route path="invoices" element={<Invoices />} />
           <Route path="order-tracking" element={<OrderTracking />} />
           <Route path="data-archive" element={<DataArchive />} />
+          <Route path="commission" element={<Commission />} />
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>

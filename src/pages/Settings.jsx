@@ -1,12 +1,28 @@
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { APP_NAME, APP_VERSION } from '@/config/constants'
-import { Trash2 } from 'lucide-react'
+import useSettingsStore from '@/stores/settingsStore'
+import { Trash2, DollarSign, Save } from 'lucide-react'
 
 export default function Settings() {
+  const { usdToPkrRate, setUsdToPkrRate } = useSettingsStore()
+  const [exchangeRate, setExchangeRate] = useState(usdToPkrRate)
+  const [saveSuccess, setSaveSuccess] = useState(false)
+
+  useEffect(() => {
+    setExchangeRate(usdToPkrRate)
+  }, [usdToPkrRate])
+
+  const handleSaveExchangeRate = () => {
+    setUsdToPkrRate(exchangeRate)
+    setSaveSuccess(true)
+    setTimeout(() => setSaveSuccess(false), 3000)
+  }
+
   const handleClearData = () => {
     if (window.confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
       localStorage.clear()
@@ -48,6 +64,49 @@ export default function Settings() {
                 A modern, frontend-only Enterprise Resource Planning (ERP) system built with
                 React, Vite, and TailwindCSS. All data is stored locally in your browser.
               </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* USD to PKR Exchange Rate */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-green-600" />
+              Currency Exchange Rate
+            </CardTitle>
+            <CardDescription>
+              Configure the USD to PKR exchange rate for commission calculations
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {saveSuccess && (
+              <div className="p-3 rounded-md text-sm bg-green-50 text-green-700 border border-green-200">
+                Exchange rate saved successfully!
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="exchangeRate">USD to PKR Exchange Rate</Label>
+              <div className="flex gap-4 items-end">
+                <div className="flex-1">
+                  <Input
+                    id="exchangeRate"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={exchangeRate}
+                    onChange={(e) => setExchangeRate(parseFloat(e.target.value) || 0)}
+                    placeholder="278.00"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    1 USD = {exchangeRate.toFixed(2)} PKR
+                  </p>
+                </div>
+                <Button onClick={handleSaveExchangeRate} className="bg-green-600 hover:bg-green-700">
+                  <Save className="h-4 w-4 mr-2" />
+                  Save Rate
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -146,6 +205,10 @@ export default function Settings() {
               <li className="flex items-center">
                 <span className="text-green-500 mr-2">✓</span>
                 Advanced order tracking with filtering
+              </li>
+              <li className="flex items-center">
+                <span className="text-green-500 mr-2">✓</span>
+                Commission tracking and distribution
               </li>
               <li className="flex items-center">
                 <span className="text-green-500 mr-2">✓</span>
