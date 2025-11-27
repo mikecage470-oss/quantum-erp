@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/utils'
 import { MONTH_NAMES } from '@/config/constants'
 import useDataArchiveStore from '@/stores/dataArchiveStore'
-import { Calendar, ChevronRight, DollarSign, TrendingUp } from 'lucide-react'
+import { Calendar, ChevronRight, DollarSign, TrendingUp, List } from 'lucide-react'
 
-export default function YearView({ onSelectMonth }) {
+export default function YearView({ onSelectMonth, onViewAllOrders }) {
   const { archivedOrders, getAllYears, getYearSummary, getMonthsForYear } = useDataArchiveStore()
   const years = useMemo(() => getAllYears(), [archivedOrders])
 
@@ -68,6 +68,17 @@ export default function YearView({ onSelectMonth }) {
                     </p>
                   </div>
                 </div>
+              </div>
+              
+              {/* View All Orders Button */}
+              <div className="mb-6">
+                <Button
+                  onClick={() => onViewAllOrders(year)}
+                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+                >
+                  <List className="h-4 w-4 mr-2" />
+                  View All Orders
+                </Button>
               </div>
               
               <div>

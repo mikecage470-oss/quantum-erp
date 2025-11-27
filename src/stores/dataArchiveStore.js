@@ -83,6 +83,34 @@ const useDataArchiveStore = create(
         set((state) => ({
           archivedOrders: state.archivedOrders.filter(order => order.id !== orderId)
         }))
+      },
+      
+      updateArchivedOrder: (orderId, updates) => {
+        set((state) => {
+          const updatedOrders = state.archivedOrders.map(order => {
+            if (order.id === orderId) {
+              // If archiveDate changed, recalculate archivedMonth and archivedYear
+              if (updates.archiveDate && updates.archiveDate !== order.archiveDate) {
+                const date = new Date(updates.archiveDate)
+                return {
+                  ...order,
+                  ...updates,
+                  archivedMonth: date.getMonth() + 1,
+                  archivedYear: date.getFullYear()
+                }
+              }
+              return { ...order, ...updates }
+            }
+            return order
+          })
+          return { archivedOrders: updatedOrders }
+        })
+      },
+      
+      deleteArchivedOrder: (orderId) => {
+        set((state) => ({
+          archivedOrders: state.archivedOrders.filter(order => order.id !== orderId)
+        }))
       }
     }),
     {
