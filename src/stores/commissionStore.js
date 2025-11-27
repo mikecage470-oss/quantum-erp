@@ -138,10 +138,12 @@ const useCommissionStore = create(
       createCommissionFromOrder: (order) => {
         const ccChargeRate = order.ccChargeRate ?? 0.01
         const grossProfit = (order.poAmount || 0) - (order.vendorAmount || 0) - (order.specialExpenses || 0)
-        const ccCharges = grossProfit * ccChargeRate
+        // Only apply CC charges on positive gross profit
+        const ccCharges = Math.max(0, grossProfit) * ccChargeRate
         const actualProfit = grossProfit - ccCharges
         const defaultCommissionPercent = 20
-        const commissionAmount = actualProfit * (defaultCommissionPercent / 100)
+        // Only calculate commission on positive actual profit
+        const commissionAmount = Math.max(0, actualProfit) * (defaultCommissionPercent / 100)
         
         const commission = {
           orderId: order.id,

@@ -29,12 +29,13 @@ export default function EditCommission({ commission, isOpen, onClose }) {
   useEffect(() => {
     if (formData.poAmount !== undefined) {
       const actualProfit = (formData.poAmount || 0) - (formData.vendorAmount || 0) - (formData.additionalCharges || 0) - (formData.ccCharges || 0)
-      const commissionAmount = actualProfit * ((formData.commissionPercent || 20) / 100)
+      // Only calculate commission on positive actual profit
+      const calculatedCommission = Math.max(0, actualProfit) * ((formData.commissionPercent || 20) / 100)
       
       setFormData(prev => ({
         ...prev,
         actualProfit,
-        commissionAmount
+        commissionAmount: calculatedCommission
       }))
     }
   }, [formData.poAmount, formData.vendorAmount, formData.additionalCharges, formData.ccCharges, formData.commissionPercent])
@@ -42,11 +43,11 @@ export default function EditCommission({ commission, isOpen, onClose }) {
   // Calculate distribution amounts when percentages change
   useEffect(() => {
     if (formData.commissionAmount !== undefined) {
-      const commissionAmount = formData.commissionAmount || 0
-      const hunterAmount = commissionAmount * ((formData.hunterPercent || 0) / 100)
-      const sourcerAmount = commissionAmount * ((formData.sourcerPercent || 0) / 100)
-      const submitterAmount = commissionAmount * ((formData.submitterPercent || 0) / 100)
-      const executorAmount = commissionAmount * ((formData.executorPercent || 0) / 100)
+      const totalCommission = formData.commissionAmount || 0
+      const hunterAmount = totalCommission * ((formData.hunterPercent || 0) / 100)
+      const sourcerAmount = totalCommission * ((formData.sourcerPercent || 0) / 100)
+      const submitterAmount = totalCommission * ((formData.submitterPercent || 0) / 100)
+      const executorAmount = totalCommission * ((formData.executorPercent || 0) / 100)
       
       setFormData(prev => ({
         ...prev,

@@ -24,8 +24,6 @@ export default function ViewCommission({ commission, isOpen, onClose }) {
 
   const isBalanced = Math.abs(distributionTotal - (commission.commissionAmount || 0)) < 0.01
 
-  // Helper function to get status badge
-
   const getStatusBadge = (status) => {
     const statusOption = COMMISSION_STATUS.find(s => s.value === status)
     if (!statusOption) return <Badge variant="outline">{status}</Badge>
