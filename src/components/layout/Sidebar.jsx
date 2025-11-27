@@ -7,6 +7,7 @@ import {
   FileText, 
   Package, 
   Archive,
+  Percent,
   Settings 
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -20,6 +21,7 @@ const navigation = [
   { name: 'Invoices', href: '/invoices', icon: FileText },
   { name: 'Order Tracking', href: '/order-tracking', icon: Package },
   { name: 'Data Archive', href: '/data-archive', icon: Archive },
+  { name: 'Commission', href: '/commission', icon: Percent },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 

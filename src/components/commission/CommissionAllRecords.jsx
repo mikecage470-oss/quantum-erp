@@ -10,55 +10,61 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { MONTH_NAMES } from '@/config/constants'
-import useDataArchiveStore from '@/stores/dataArchiveStore'
+import useCommissionStore, { COMMISSION_PAYMENT_STATUS, COMMISSION_STATUS } from '@/stores/commissionStore'
 import { ArrowLeft, Calendar, ChevronUp, ChevronDown, DollarSign, TrendingUp, Eye, Pencil, Trash2 } from 'lucide-react'
-import ViewArchivedOrder from './ViewArchivedOrder'
-import EditArchivedOrder from './EditArchivedOrder'
-import DeleteConfirmationModal from './DeleteConfirmationModal'
+import ViewCommission from './ViewCommission'
+import EditCommission from './EditCommission'
+import DeleteCommissionModal from './DeleteCommissionModal'
 
-const calculateActualProfit = (order) => {
-  const ccChargeRate = order.ccChargeRate ?? 0.01
-  const grossProfit = (order.poAmount || 0) - (order.vendorAmount || 0) - (order.specialExpenses || 0)
-  const ccCharge = grossProfit * ccChargeRate
-  return grossProfit - ccCharge
-}
-
-export default function AllYearOrders({ year, onBack }) {
-  const { getOrdersByYear, getYearSummary, deleteArchivedOrder, archivedOrders } = useDataArchiveStore()
-  const orders = useMemo(() => getOrdersByYear(year), [year, archivedOrders])
-  const summary = useMemo(() => getYearSummary(year), [year, archivedOrders])
+export default function CommissionAllRecords({ year, onBack }) {
+  const { getCommissionsByYear, getYearSummary, deleteCommission, commissions } = useCommissionStore()
+  const records = useMemo(() => getCommissionsByYear(year), [year, commissions])
+  const summary = useMemo(() => getYearSummary(year), [year, commissions])
   
   const [globalFilter, setGlobalFilter] = useState('')
   const [sorting, setSorting] = useState([])
-  const [selectedOrder, setSelectedOrder] = useState(null)
+  const [selectedCommission, setSelectedCommission] = useState(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [deleteSuccess, setDeleteSuccess] = useState(false)
 
-  const handleViewOrder = (order) => {
-    setSelectedOrder(order)
+  const handleViewCommission = (commission) => {
+    setSelectedCommission(commission)
     setIsDetailOpen(true)
   }
 
-  const handleEditOrder = (order) => {
-    setSelectedOrder(order)
+  const handleEditCommission = (commission) => {
+    setSelectedCommission(commission)
     setIsEditOpen(true)
   }
 
-  const handleDeleteOrder = (order) => {
-    setSelectedOrder(order)
+  const handleDeleteCommission = (commission) => {
+    setSelectedCommission(commission)
     setIsDeleteOpen(true)
   }
 
   const handleConfirmDelete = () => {
-    if (selectedOrder) {
-      deleteArchivedOrder(selectedOrder.id)
+    if (selectedCommission) {
+      deleteCommission(selectedCommission.id)
       setDeleteSuccess(true)
       setTimeout(() => setDeleteSuccess(false), 3000)
     }
+  }
+
+  const getStatusBadge = (status) => {
+    const statusOption = COMMISSION_STATUS.find(s => s.value === status)
+    if (!statusOption) return <Badge variant="outline">{status}</Badge>
+    return <Badge className={`${statusOption.color} text-white`}>{statusOption.label}</Badge>
+  }
+
+  const getPaymentStatusBadge = (status) => {
+    const statusOption = COMMISSION_PAYMENT_STATUS.find(s => s.value === status)
+    if (!statusOption) return <Badge variant="outline">{status}</Badge>
+    return <Badge className={`${statusOption.color} text-white`}>{statusOption.label}</Badge>
   }
 
   const columns = useMemo(
@@ -73,53 +79,61 @@ export default function AllYearOrders({ year, onBack }) {
         header: 'Customer',
       },
       {
-        accessorKey: 'vendorName',
-        header: 'Vendor',
-      },
-      {
         accessorKey: 'poAmount',
-        header: 'Customer PO Amount',
+        header: 'PO Amount',
         cell: (info) => formatCurrency(info.getValue()),
       },
       {
-        accessorKey: 'vendorAmount',
-        header: 'Vendor Amount',
-        cell: (info) => formatCurrency(info.getValue()),
-      },
-      {
-        id: 'profit',
+        accessorKey: 'actualProfit',
         header: 'Actual Profit',
         cell: (info) => {
-          const order = info.row.original
-          const profit = calculateActualProfit(order)
+          const value = info.getValue()
           return (
-            <span className={profit >= 0 ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
-              {formatCurrency(profit)}
+            <span className={value >= 0 ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
+              {formatCurrency(value)}
             </span>
           )
         },
       },
       {
-        accessorKey: 'archivedMonth',
-        header: 'Month',
-        cell: (info) => MONTH_NAMES[info.getValue() - 1],
+        accessorKey: 'commissionAmount',
+        header: 'Commission',
+        cell: (info) => formatCurrency(info.getValue()),
       },
       {
-        accessorKey: 'archiveDate',
-        header: 'Archive Date',
+        id: 'month',
+        header: 'Month',
+        cell: (info) => {
+          const date = new Date(info.row.original.submissionDate)
+          return MONTH_NAMES[date.getMonth()]
+        },
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        cell: (info) => getStatusBadge(info.getValue()),
+      },
+      {
+        accessorKey: 'paymentMade',
+        header: 'Payment',
+        cell: (info) => getPaymentStatusBadge(info.getValue()),
+      },
+      {
+        accessorKey: 'submissionDate',
+        header: 'Submission Date',
         cell: (info) => formatDate(info.getValue()),
       },
       {
         id: 'actions',
         header: 'Actions',
         cell: (info) => {
-          const order = info.row.original
+          const commission = info.row.original
           return (
             <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleViewOrder(order)}
+                onClick={() => handleViewCommission(commission)}
                 title="View Details"
               >
                 <Eye className="h-4 w-4" />
@@ -127,16 +141,16 @@ export default function AllYearOrders({ year, onBack }) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleEditOrder(order)}
-                title="Edit Order"
+                onClick={() => handleEditCommission(commission)}
+                title="Edit Commission"
               >
                 <Pencil className="h-4 w-4" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleDeleteOrder(order)}
-                title="Delete Order"
+                onClick={() => handleDeleteCommission(commission)}
+                title="Delete Commission"
                 className="text-red-600 hover:text-red-700 hover:bg-red-50"
               >
                 <Trash2 className="h-4 w-4" />
@@ -150,7 +164,7 @@ export default function AllYearOrders({ year, onBack }) {
   )
 
   const table = useReactTable({
-    data: orders,
+    data: records,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -178,27 +192,27 @@ export default function AllYearOrders({ year, onBack }) {
           Back to Years
         </Button>
         <nav className="text-sm text-gray-600">
-          <span>Data Archive</span>
+          <span>Commission</span>
           <span className="mx-2">/</span>
           <span>{year}</span>
           <span className="mx-2">/</span>
-          <span className="font-medium text-gray-900">All Orders</span>
+          <span className="font-medium text-gray-900">All Records</span>
         </nav>
       </div>
 
       {/* Delete Success Message */}
       {deleteSuccess && (
         <div className="p-3 rounded-md text-sm bg-green-50 text-green-700 border border-green-200">
-          Order deleted successfully!
+          Commission record deleted successfully!
         </div>
       )}
 
       {/* Year Summary Card */}
       <Card>
-        <CardHeader className="bg-blue-50 border-b">
+        <CardHeader className="bg-purple-50 border-b">
           <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-blue-600" />
-            {year} - All Orders
+            <Calendar className="h-5 w-5 text-purple-600" />
+            {year} - All Commission Records
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
@@ -222,11 +236,11 @@ export default function AllYearOrders({ year, onBack }) {
               </div>
             </div>
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-              <TrendingUp className={`h-8 w-8 ${summary.actualProfit >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+              <TrendingUp className={`h-8 w-8 ${summary.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`} />
               <div>
-                <p className="text-sm text-gray-600">Actual Profit</p>
-                <p className={`text-lg font-semibold ${summary.actualProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {formatCurrency(summary.actualProfit)}
+                <p className="text-sm text-gray-600">Net Profit</p>
+                <p className={`text-lg font-semibold ${summary.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {formatCurrency(summary.netProfit)}
                 </p>
               </div>
             </div>
@@ -234,16 +248,16 @@ export default function AllYearOrders({ year, onBack }) {
         </CardContent>
       </Card>
 
-      {/* Orders Table */}
+      {/* Commission Table */}
       <Card>
         <CardHeader>
-          <CardTitle>All Archived Orders ({summary.orderCount})</CardTitle>
+          <CardTitle>All Commission Records ({summary.commissionCount})</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Search */}
           <div className="mb-4">
             <Input
-              placeholder="Search orders..."
+              placeholder="Search commission records..."
               value={globalFilter ?? ''}
               onChange={(e) => setGlobalFilter(e.target.value)}
               className="max-w-sm"
@@ -300,7 +314,7 @@ export default function AllYearOrders({ year, onBack }) {
                         colSpan={columns.length}
                         className="px-4 py-8 text-center text-gray-500"
                       >
-                        No orders found
+                        No commission records found
                       </td>
                     </tr>
                   ) : (
@@ -333,7 +347,7 @@ export default function AllYearOrders({ year, onBack }) {
                 (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
                 table.getFilteredRowModel().rows.length
               )}{' '}
-              of {table.getFilteredRowModel().rows.length} orders
+              of {table.getFilteredRowModel().rows.length} records
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -357,35 +371,35 @@ export default function AllYearOrders({ year, onBack }) {
         </CardContent>
       </Card>
 
-      {/* View Order Modal */}
-      <ViewArchivedOrder
-        order={selectedOrder}
+      {/* View Commission Modal */}
+      <ViewCommission
+        commission={selectedCommission}
         isOpen={isDetailOpen}
         onClose={() => {
           setIsDetailOpen(false)
-          setSelectedOrder(null)
+          setSelectedCommission(null)
         }}
       />
 
-      {/* Edit Order Modal */}
-      <EditArchivedOrder
-        order={selectedOrder}
+      {/* Edit Commission Modal */}
+      <EditCommission
+        commission={selectedCommission}
         isOpen={isEditOpen}
         onClose={() => {
           setIsEditOpen(false)
-          setSelectedOrder(null)
+          setSelectedCommission(null)
         }}
       />
 
       {/* Delete Confirmation Modal */}
-      <DeleteConfirmationModal
+      <DeleteCommissionModal
         isOpen={isDeleteOpen}
         onClose={() => {
           setIsDeleteOpen(false)
-          setSelectedOrder(null)
+          setSelectedCommission(null)
         }}
         onConfirm={handleConfirmDelete}
-        orderInfo={selectedOrder}
+        commissionInfo={selectedCommission}
       />
     </div>
   )

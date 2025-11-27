@@ -18,7 +18,12 @@ import ViewArchivedOrder from './ViewArchivedOrder'
 import EditArchivedOrder from './EditArchivedOrder'
 import DeleteConfirmationModal from './DeleteConfirmationModal'
 
-const calculateProfit = (order) => (order.poAmount || 0) - (order.vendorAmount || 0)
+const calculateActualProfit = (order) => {
+  const ccChargeRate = order.ccChargeRate ?? 0.01
+  const grossProfit = (order.poAmount || 0) - (order.vendorAmount || 0) - (order.specialExpenses || 0)
+  const ccCharge = grossProfit * ccChargeRate
+  return grossProfit - ccCharge
+}
 
 export default function MonthView({ year, month, onBack }) {
   const { getOrdersByMonth, getMonthSummary, deleteArchivedOrder, archivedOrders } = useDataArchiveStore()
@@ -83,10 +88,10 @@ export default function MonthView({ year, month, onBack }) {
       },
       {
         id: 'profit',
-        header: 'Profit',
+        header: 'Actual Profit',
         cell: (info) => {
           const order = info.row.original
-          const profit = calculateProfit(order)
+          const profit = calculateActualProfit(order)
           return (
             <span className={profit >= 0 ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
               {formatCurrency(profit)}
@@ -216,11 +221,11 @@ export default function MonthView({ year, month, onBack }) {
               </div>
             </div>
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-              <TrendingUp className={`h-8 w-8 ${summary.grossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+              <TrendingUp className={`h-8 w-8 ${summary.actualProfit >= 0 ? 'text-green-600' : 'text-red-600'}`} />
               <div>
-                <p className="text-sm text-gray-600">Gross Profit</p>
-                <p className={`text-lg font-semibold ${summary.grossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {formatCurrency(summary.grossProfit)}
+                <p className="text-sm text-gray-600">Actual Profit</p>
+                <p className={`text-lg font-semibold ${summary.actualProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {formatCurrency(summary.actualProfit)}
                 </p>
               </div>
             </div>
